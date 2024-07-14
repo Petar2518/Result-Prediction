@@ -316,6 +316,26 @@
                                          (if (< (:homeGoals for-calculating)  (:awayGoals for-calculating)  ) (+ away-win (:probability for-calculating) ) (+ away-win 0))
                                          (if (= (:homeGoals for-calculating)  (:awayGoals for-calculating)  ) (+ equal (:probability for-calculating) ) (+ equal 0) ))))))
 
+(defn show-result-probabilities
+  [row]
+  (loop [remaining-data row final-data []]
+    (if (empty? remaining-data)
+    final-data
+    (let [[for-labeling & remaining] remaining-data
+          home-team (:homeTeam for-labeling)
+          away-team (:awayTeam for-labeling)
+          home-goals (:homeGoals for-labeling)
+          away-goals (:awayGoals for-labeling)
+          probability (round2 2 (* 100 (:probability for-labeling)))]
+      (if (> probability 1)(recur remaining
+                                  (into final-data [{:homeTeam home-team
+                                                     :result (str home-goals ":" away-goals)
+                                                     :awayTeam away-team
+                                                     :probability (str  probability "%")}]) )
+                           (recur remaining final-data)
+
+                       )))))
+
 (defn menu
   "Start menu"
   []
@@ -340,22 +360,28 @@
   (read-line))
 
 
-(defn show-results
+(defn show-win-probabilities
   []
   (let [home-team (prompt-user "Enter home team: ")
         away-team (prompt-user "Enter away team: ")]
   (println (calculate-win-probabilities (add-result-probabilities (get-result-probabilities (get-goal-probabilities-home home-team away-team)(get-goal-probabilities-away home-team away-team)) home-team away-team)))))
+
+(defn show-results-probabilities
+  []
+  (let [home-team (prompt-user "Enter home team: ")
+        away-team (prompt-user "Enter away team: ")]
+     (run! println (show-result-probabilities (add-result-probabilities (get-result-probabilities (get-goal-probabilities-home home-team away-team)(get-goal-probabilities-away home-team away-team)) home-team away-team)))))
 
 (defn process-user-choice
   "Process users choice."
   [choice]
   (cond
     (= choice "1") (do
-                     (show-results)
+                     (show-win-probabilities)
                      (menu)
                      (process-user-choice (get-choice)))
     (= choice "2") (do
-                     (show-results)
+                     (show-results-probabilities)
                      (menu)
                      (process-user-choice (get-choice)))
     (= choice "0") (do

@@ -307,9 +307,9 @@
   "Calculate probabilities for home team win / draw / away team win based on probabilities of results"
   [row]
   (loop [remaining-data row home-win 0 away-win 0 equal 0]
-    (if (empty? remaining-data) [{:homeTeamWins (round2 2 (* 100 home-win))
-                                  :draw (round2 2 (* 100 equal))
-                                  :awayTeamWins (round2 2 (* 100 away-win)) }]
+    (if (empty? remaining-data) [{:homeTeamWins (str  (round2 2 (* 100 home-win)) "%")
+                                  :draw (str (round2 2 (* 100 equal)) "%")
+                                  :awayTeamWins (str (round2 2 (* 100 away-win)) "%")  }]
                                 (let [[for-calculating & remaining] remaining-data]
                                   (recur remaining
                                          (if (> (:homeGoals for-calculating)  (:awayGoals for-calculating)  ) (+ home-win (:probability for-calculating) ) (+ home-win 0))
@@ -320,7 +320,7 @@
   [row]
   (loop [remaining-data row final-data []]
     (if (empty? remaining-data)
-    final-data
+    (sort-by :probability final-data)
     (let [[for-labeling & remaining] remaining-data
           home-team (:homeTeam for-labeling)
           away-team (:awayTeam for-labeling)

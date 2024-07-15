@@ -59,7 +59,7 @@
     ))
 
 (defn -main
-  "I don't do a whole lot ... yet."
+  "Main function that allows usage of software"
   []
   (menu)
   (process-user-choice (get-choice)))

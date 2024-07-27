@@ -1,12 +1,11 @@
 (ns project.find-games
-  (:require [project.file_operations :as data]
-            [clojure.set :as intersection])
+  (:require [clojure.set :as intersection])
   )
 
 
 (defn get-games
   "Get all games that were played by either home or away team"
-  [host-team away-team]
+  [host-team away-team data]
   (reverse
     (sort-by :date
              (filter
@@ -16,7 +15,7 @@
                   (= (:homeTeam %) away-team)
                   (= (:awayTeam %) away-team)
                   )
-               data/prepared-data))))
+               data))))
 
 (defn get-all-games-for-team
   "Get all games played by team passed as argument"

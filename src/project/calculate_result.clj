@@ -5,15 +5,15 @@
 
 (defn get-result-probabilities
   "Calculate probabilities for ceratin results between 0:0 and 7:7"
-  [home-team away-team]
-  (for [x1 (goals/get-goal-probabilities-home home-team away-team)
-        x2 (goals/get-goal-probabilities-away home-team away-team)]
+  [home-team away-team data]
+  (for [x1 (goals/get-goal-probabilities-home home-team away-team data)
+        x2 (goals/get-goal-probabilities-away home-team away-team data)]
     (util/round2 4 (* x1 x2))))
 
 (defn add-result-probabilities
   "Assign probabilities to results"
-  [home-team away-team]
-  (loop [remaining-data (get-result-probabilities home-team away-team) final-data [] counter 0]
+  [home-team away-team data]
+  (loop [remaining-data (get-result-probabilities home-team away-team data) final-data [] counter 0]
     (if (empty? remaining-data) final-data
                                 (let [[for-labeling & remaining] remaining-data]
                                   (recur remaining
@@ -27,8 +27,8 @@
 
 (defn calculate-win-probabilities
   "Calculate probabilities for home team win / draw / away team win based on probabilities of results"
-  [home-team away-team]
-  (loop [remaining-data (add-result-probabilities home-team away-team) home-win 0 away-win 0 equal 0]
+  [home-team away-team data]
+  (loop [remaining-data (add-result-probabilities home-team away-team data) home-win 0 away-win 0 equal 0]
     (if (empty? remaining-data) [{:homeTeamWins (str (util/round2 2 (* 100 home-win)) "%")
                                   :draw         (str (util/round2 2 (* 100 equal)) "%")
                                   :awayTeamWins (str (util/round2 2 (* 100 away-win)) "%")}]
@@ -39,8 +39,8 @@
                                          (if (= (:homeGoals for-calculating) (:awayGoals for-calculating)) (+ equal (:probability for-calculating)) (+ equal 0)))))))
 
 (defn show-result-probabilities
-  [home-team away-team]
-  (loop [remaining-data (add-result-probabilities home-team away-team) final-data []]
+  [home-team away-team data]
+  (loop [remaining-data (add-result-probabilities home-team away-team data) final-data []]
     (if (empty? remaining-data)
       (sort-by :probability final-data)
       (let [[for-labeling & remaining] remaining-data

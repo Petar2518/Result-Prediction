@@ -1,6 +1,7 @@
 (ns project.calculate-goals
   (:require [project.find-games :as games]
-            [project.util :as util]))
+            [project.util :as util]
+            [project.file_operations :as data]))
 
 
 (defn count-any-team-goals-based-on-their-form
@@ -140,9 +141,8 @@
 
 (defn count-expected-goals-home-team
   "Calculate expected goals for home team in upcoming match"
-  [host-team away-team]
-  (let [data (games/get-games host-team away-team)
-        all-games-for-home-team (games/get-all-games-for-team host-team data)
+  [host-team away-team data]
+  (let [all-games-for-home-team (games/get-all-games-for-team host-team data)
         all-games-for-away-team (games/get-all-games-for-team away-team data)
         home-games-for-team (games/get-home-games-for-team host-team all-games-for-home-team)
         away-games-for-team (games/get-away-games-for-team away-team all-games-for-away-team)
@@ -158,9 +158,8 @@
 
 (defn count-expected-goals-away-team
   "Calculate expected goals for away team in upcoming match"
-  [host-team away-team]
-  (let [data (games/get-games host-team away-team)
-        all-games-for-home-team (games/get-all-games-for-team host-team data)
+  [host-team away-team data]
+  (let [all-games-for-home-team (games/get-all-games-for-team host-team data)
         all-games-for-away-team (games/get-all-games-for-team away-team data)
         home-games-for-team (games/get-home-games-for-team host-team all-games-for-home-team)
         away-games-for-team (games/get-away-games-for-team away-team all-games-for-away-team)
@@ -176,10 +175,10 @@
 
 (defn get-goal-probabilities-home
   "Calculate probabilities for home team to score certain amount of goals between 0 and 7"
-  [home-team away-team]
-  (map #(util/poisson-distribution (count-expected-goals-home-team home-team away-team) %) [0 1 2 3 4 5 6 7 8]))
+  [home-team away-team data]
+  (map #(util/poisson-distribution (count-expected-goals-home-team home-team away-team data) %) [0 1 2 3 4 5 6 7 8]))
 
 (defn get-goal-probabilities-away
   "Calculate probabilities for away team to score certain amount of goals between 0 and 7"
-  [home-team away-team]
-  (map #(util/poisson-distribution (count-expected-goals-away-team home-team away-team) %) [0 1 2 3 4 5 6 7 8]))
+  [home-team away-team data]
+  (map #(util/poisson-distribution (count-expected-goals-away-team home-team away-team data) %) [0 1 2 3 4 5 6 7 8]))

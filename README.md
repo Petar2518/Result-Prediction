@@ -1,44 +1,18 @@
 # project
 
-FIXME: description
-
-## Installation
-
-Download from http://example.com/FIXME.
+This project is created to predict football results.
 
 ## Usage
 
-FIXME: explanation
+After starting the application, user menu will show. User needs to decide if he wants to see probabilities of results, or probabilities of win/draw/lose scenarios. In case user wants to see probabilities of match winner or if it will end draw, he is supposed to write 1 in console. After that he will get message from console that he needs to write Home Team and once he submits name of home team, same prompt will be shown for away team. Once user writes both home and away team, the win probabilities will be shown in console. It's very important to write Home Team and Away Team in correct order, because win predictions take in calculation that teams that host game usually play better in front of its fans. 
+Second option that this application provides is to calculate probabilties of exact result. In order to start this operation, once initial menu is shown, user is supposed to choose second option by writing 2 in console. The process is quite similar to win predicting - Once option is selected, there will be prompt in console that would ask to insert name of Home Team. Once it's done, it will be repeated for away team. After writing names of home team and away team, probabilities of each result for which possibility is higher than 1% will be shown on screen, sorted descending, so most likely result will be shown first. User can repeat those operations as many times as he wish. Once user is finished with work, he can quit application by entering 9 from main menu. 
 
-    $ java -jar project-0.1.0-standalone.jar [args]
+### Code explanation
 
-## Options
+In order to calculate probabilities for results and winner of match, there are multiple functions implemented that will help with this. First of all, there are multiple functions that calculated expected amount of goals scored by either home or away team, based on their home form, form in general, as well as based on their recent matchups with given opponent. In order to calculate goals, we also need to consider recent form of opponent - how many goals have they conceded in recent games, as well as in recent away games and their defensive form in recent matchups against their opponent (which also include calculations for both home and away games, giving better factor of calculation to away games in such matchup). All of those calculations were given certain factors of significance - home form is considered more important than form in general, form against given opponent is considered as most important factor. Once the expected goals for both home team and away team are calculated, there is Poisson distribution implemented to show probabilities of each of results. Using Poisson's distribution, probabilities for all results between 0-0 and 8-8 are calculated. Once results are calculated, probability of certain team winning or game ending in a draw is calculated as sum of all results that would lead to certain team winning or results that show that match ended in a draw. Before passing this data to user, it's nicely formated and sorted so user can easily read data. 
 
-FIXME: listing of options this app accepts.
+One important thing is that currently this application works based on .csv files that contain data. Currently application has first 200 matches from Premier League season 2023/2024. If user wishes to make prediction for other dataset, data should be implemented in format "Home Team", "Home Team Goals", "Away Team Goals", "Away Team", "Date in format yyyy-mm-dd". This data should be uploaded under source folder of application under name "data.csv", although with little bit of tweaking in code, it could be made that user needs to fill in name of file when application starts in order to make this more open for changes.
 
-## Examples
+### Testing
 
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
-
-## License
-
-Copyright © 2024 FIXME
-
-This program and the accompanying materials are made available under the
-terms of the Eclipse Public License 2.0 which is available at
-http://www.eclipse.org/legal/epl-2.0.
-
-This Source Code may also be made available under the following Secondary
-Licenses when the conditions for such availability set forth in the Eclipse
-Public License, v. 2.0 are satisfied: GNU General Public License as published by
-the Free Software Foundation, either version 2 of the License, or (at your
-option) any later version, with the GNU Classpath Exception which is available
-at https://www.gnu.org/software/classpath/license.html.
+All functions that are defined in this application are covered by tests using midje. Tests can be found under folder /tests where each of defined namespaces has it's own test namespaces in which all functions from corresponding namespace are covered.
